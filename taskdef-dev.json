@@ -1,0 +1,39 @@
+{
+    "executionRoleArn": "arn:aws-us-gov:iam::129821921371:role/sample-appExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "API",
+            "image": "<IMAGE1_NAME>",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 8080,
+                    "protocol": "tcp",
+                    "containerPort": 8080
+                }
+            ],
+            "environment": [
+                {
+                    "name": "spring.datasource.url",
+                    "value": "jdbc:postgresql://database-1-instance-1.ca7v4bbeoffp.us-gov-west-1.rds.amazonaws.com/users"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/sample-appFamily",
+                    "awslogs-region": "us-gov-west-1",
+                    "awslogs-stream-prefix": "ecs",
+                    "awslogs-create-group": "true"
+                }
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "cpu": "256",
+    "memory": "512",
+    "family": "sample-appFamily"
+}
