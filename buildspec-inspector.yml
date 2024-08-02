@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - REPOSITORY_URI=${ECR_REPO}
+      - echo Logging in to Amazon ECR.....
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo "Installing Inspector SBOM"
+      - wget https://amazon-inspector-sbomgen.s3.amazonaws.com/latest/linux/amd64/inspector-sbomgen.zip -O inspector-sbomgen.zip
+      - unzip inspector-sbomgen.zip
+      - mv inspector-sbomgen-*/linux/amd64/inspector-sbomgen ./inspector-sbomgen
+      - chmod +x ./inspector-sbomgen
+      - "./inspector-sbomgen --version"
+      # - "./inspector-sbomgen directory --path ./ --scanners dockerfile > ./sbom.json" 
+      # - ./inspector-sbomgen container --scan-sbom --image vulnerables/web-dvwa:latest -o sbom.json
+      - ./inspector-sbomgen container --scan-sbom --image $REPOSITORY_URI:latest -o sbom.json
+      - echo "OUTPUT BELOW FOR sbom.json"
+      - "cat sbom.json"

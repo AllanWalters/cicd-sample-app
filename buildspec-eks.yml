@@ -1,0 +1,41 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - REPOSITORY_URI=${ECR_REPO}
+      - echo Logging in to Amazon ECR.....
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      # Run Unit Tests on Clean Package
+      - mvn clean package
+      - docker build --platform linux/amd64 -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - echo Here is the imageDetail
+      - cat imageDetail.json
+      - ls -lah
+      # Define variables and BUILD
+
+      # - MANIFEST_FILE="deployment.yaml"
+      # - NEW_IMAGE=$REPOSITORY_URI:$IMAGE_TAG
+      # - echo Updating the Kubernetes manifest file...
+      # - sed -i "s|image:.*|image: $NEW_IMAGE|" path/to/your/manifest.yaml
+      # - cat path/to/your/manifest.yaml
+artifacts:
+  files: 
+    - 'image*.json'
+    - 'appspec.yaml'
+    - 'taskdef-staging.json'
+    - 'taskdef-qa.json'
+    - 'taskdef-dev.json'

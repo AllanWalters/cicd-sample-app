@@ -1,0 +1,8 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Build started on `date`
+      # Run all Integration Tests in Test directory
+      - mvn verify
+
