@@ -1,5 +1,5 @@
 {
-    "executionRoleArn": "arn:aws:iam::513461903764:role/ECSTaskExecutionRoleU5__",
+    "executionRoleArn": "arn:aws:iam::513461903764:role/ECSTaskExecutionRoleU5",
     "containerDefinitions": [
         {
             "name": "API",
@@ -22,7 +22,7 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-group": "/ecs/sample-appFamily",
-                    "awslogs-region": "us-gov-west-1",
+                    "awslogs-region": "us-west-2",
                     "awslogs-stream-prefix": "ecs",
                     "awslogs-create-group": "true"
                 }
