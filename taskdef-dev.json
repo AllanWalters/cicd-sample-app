@@ -1,5 +1,5 @@
 {
-    "executionRoleArn": "arn:aws:iam::513461903764:role/ECSTaskExecutionRoleU5",
+    "executionRoleArn": "arn:aws:iam::513461903764:role/ECSTaskExecutionRoleU5__",
     "containerDefinitions": [
         {
             "name": "API",
